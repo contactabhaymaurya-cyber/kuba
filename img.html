@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome Folder Gallery</h1>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+
+    <script>
+	const folderName = "welcome"; 
+const galleryGrid = document.getElementById("galleryGrid");
+
+// Camera ki starting aur ending image ka number
+const startNumber = 5931;
+const endNumber = 5958;
+
+// Loop jo 5931 se lekar 5958 tak chalega
+for (let i = startNumber; i <= endNumber; i++) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    // File ka poora naam (e.g., DSC_5931.JPG)
+    // NOTE: Agar aapki images ka extension lowercase (.jpg) hai, toh niche .JPG ko .jpg kar dena
+    const fileName = `DSC_${i}.JPG`; 
+
+    card.innerHTML = `
+        <img src="${folderName}/${fileName}" alt="${fileName}" onerror="this.onerror=null; this.src='https://placehold.co/250x200?text=DSC_${i}+Not+Found';">
+        <div class="card-info">
+            <h3>DSC_${i}</h3>
+        </div>
+    `;
+
+    galleryGrid.appendChild(card);
+}
+	</script>
+	
+	<STYLE>
+	* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 15px;
+    text-align: left;
+}
+
+.card-info h3 {
+    font-size: 1rem;
+    color: #34495e;
+}
+	
+	</STYLE>
+</body>
+</html>

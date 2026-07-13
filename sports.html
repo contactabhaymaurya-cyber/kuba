@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome Folder Gallery</h1>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+
+    <div class="slider-overlay" id="sliderOverlay">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+        <div class="slider-content">
+            <img src="" alt="Slider Image" id="sliderImg">
+            <h3 id="sliderTitle"></h3>
+        </div>
+        <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
+    </div>
+
+    <script>
+        const folderName = "cycle"; 
+        const galleryGrid = document.getElementById("galleryGrid");
+        const startNumber = 6055;
+        const endNumber = 6077;
+
+        // Array jisme hum saari images ke paths store karenge taaki slider chal sake
+        const imagesList = [];
+        let currentIndex = 0;
+
+        // Loop jo images generate karega
+        for (let i = startNumber; i <= endNumber; i++) {
+            const fileName = `DSC_${i}.JPG`;
+            const imgSrc = `${folderName}/${fileName}`;
+            
+            // Image data ko list me push kar rahe hain
+            imagesList.push({ src: imgSrc, title: `DSC_${i}` });
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            // Data attribute set kiya taaki click karne par index pata chal sake
+            card.setAttribute("data-index", imagesList.length - 1);
+
+            card.innerHTML = `
+                <img src="${imgSrc}" alt="${fileName}" onerror="this.onerror=null; this.src='https://placehold.co/250x200?text=DSC_${i}+Not+Found';">
+                <div class="card-info">
+                    <h3>DSC_${i}</h3>
+                </div>
+            `;
+
+            galleryGrid.appendChild(card);
+        }
+
+        // Slider Elements
+        const sliderOverlay = document.getElementById("sliderOverlay");
+        const sliderImg = document.getElementById("sliderImg");
+        const sliderTitle = document.getElementById("sliderTitle");
+        const closeBtn = document.getElementById("closeBtn");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        // Function: Slider me specific image dikhane ke liye
+        function showImage(index) {
+            currentIndex = index;
+            sliderImg.src = imagesList[currentIndex].src;
+            sliderTitle.textContent = imagesList[currentIndex].title;
+        }
+
+        // Gallery card par click event listener
+        galleryGrid.addEventListener("click", function(e) {
+            const card = e.target.closest(".card");
+            if (card) {
+                const index = parseInt(card.getAttribute("data-index"));
+                showImage(index);
+                sliderOverlay.classList.add("active"); // Slider open
+            }
+        });
+
+        // Close Slider
+        closeBtn.addEventListener("click", () => {
+            sliderOverlay.classList.remove("active");
+        });
+
+        // Next Image
+        nextBtn.addEventListener("click", () => {
+            let nextIndex = currentIndex + 1;
+            if (nextIndex >= imagesList.length) nextIndex = 0; // Loop back to start
+            showImage(nextIndex);
+        });
+
+        // Previous Image
+        prevBtn.addEventListener("click", () => {
+            let prevIndex = currentIndex - 1;
+            if (prevIndex < 0) prevIndex = imagesList.length - 1; // Loop to end
+            showImage(prevIndex);
+        });
+
+        // Keyboard support (Esc, Left, Right arrows)
+        document.addEventListener("keydown", (e) => {
+            if (!sliderOverlay.classList.contains("active")) return;
+            if (e.key === "Escape") sliderOverlay.classList.remove("active");
+            if (e.key === "ArrowRight") nextBtn.click();
+            if (e.key === "ArrowLeft") prevBtn.click();
+        });
+    </script>
+	
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer; /* Clickable look dene ke liye */
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.02); /* Hover karne par thoda zoom hoga */
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .card-info h3 {
+            font-size: 1rem;
+            color: #34495e;
+        }
+
+        /* --- SLIDER STYLES --- */
+        .slider-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9); /* Dark background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        /* Jab active class add hogi tabhi dikhega */
+        .slider-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .slider-content {
+            text-align: center;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .slider-content img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        .slider-content h3 {
+            color: #fff;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Buttons Styling */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ff4d4d;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            font-size: 30px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .prev-btn { left: 30px; }
+        .next-btn { right: 30px; }
+
+        /* Mobile Responsive Buttons */
+        @media (max-width: 600px) {
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 20px;
+            }
+            .prev-btn { left: 10px; }
+            .next-btn { right: 10px; }
+        }
+    </style>
+</body>
+</html>
